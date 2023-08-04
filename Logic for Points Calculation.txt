@@ -1,0 +1,79 @@
+Logic for Points Calculation:
+In the rewards-program-core module, create a class PointsCalculator responsible for calculating the reward points based on the provided rules.
+
+package com.example.rewards program.core;
+
+public class PointsCalculator {
+    public int calculatePoints(double amount) {
+        int points = 0;
+        if (amount > 100) {
+            points += 2 * (amount - 100);
+            amount = 100;
+        }
+        if (amount > 50) {
+            points += (amount - 50);
+        }
+        return points;
+    }
+}
+
+
+Unit Tests for Points Calculation Logic:
+Write JUnit 5 tests to validate the PointsCalculator logic, including corner cases.
+
+package com.example.rewards program.core;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class PointsCalculatorTest {
+    private final PointsCalculator pointsCalculator = new PointsCalculator();
+
+    @Test
+    public void testCalculatePoints_NoPoints() {
+        assertEquals(0, pointsCalculator.calculatePoints(0));
+    }
+
+    @Test
+    public void testCalculatePoints_LessThan50() {
+        assertEquals(0, pointsCalculator.calculatePoints(49));
+    }
+
+    @Test
+    public void testCalculatePoints_50() {
+        assertEquals(0, pointsCalculator.calculatePoints(50));
+    }
+
+    @Test
+    public void testCalculatePoints_Between50And100() {
+        assertEquals(1, pointsCalculator.calculatePoints(51));
+        assertEquals(50, pointsCalculator.calculatePoints(100));
+    }
+
+    @Test
+    public void testCalculatePoints_MoreThan100() {
+        assertEquals(90, pointsCalculator.calculatePoints(120));
+        assertEquals(350, pointsCalculator.calculatePoints(200));
+    }
+}
+
+REST API Endpoints:
+In the rewards-program-api module, create a controller class RewardsController with an endpoint that accepts the amount spent by a customer and returns the reward points.
+
+package com.example.rewardsprogram.api;
+
+import com.example.rewardsprogram.core.PointsCalculator;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class RewardsController {
+    private final PointsCalculator pointsCalculator = new PointsCalculator();
+
+    @GetMapping("/calculatePoints")
+    public int calculatePoints(@RequestParam double amount) {
+        return pointsCalculator.calculatePoints(amount);
+    }
+}
